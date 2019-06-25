@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="baseline_default_margin">8dp</dimen>
+
+    <!--Add dialog-->
+    <dimen name="form_item_spacing">4dp</dimen>
+    <dimen name="form_item_text_size">18sp</dimen>
+</resources>

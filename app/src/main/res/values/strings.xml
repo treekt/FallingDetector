@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Detektor Upadku</string>
+    <string name="title_activity_contact">Lista Kontaktów</string>
+    <string name="activity_main_contacts">Kontakty</string>
+    <string name="basic_fall_message">Wywróciłem się pod adresem </string>
+
+    <!--Contacts dialog-->
+    <string name="contact_dialog_number">Numer</string>
+    <string name="contact_dialog_name">Imię</string>
+    <string name="contact_dialog_surname">Nazwisko</string>
+    <string name="contact_dialog_title">Dodaj kontakt</string>
+    <string name="contact_dialog_submit_text">Dodaj</string>
+    <string name="contact_dialog_cancel_text">Anuluj</string>
+
+    <!--Location Provider-->
+    <string name="location_service_geocoder">Could not connect to geocoder</string>
+    <string name="main_activity_content_description">Main activity image</string>
+    <string name="detector_service_message_sent_toast">Informacja o upadku została wysłana</string>
+    <string name="fall_accident_information">Jeśli obawiasz się o swoje zdrowie, aktywuj detektor aby powiadomił o twoim
+        upadku.
+    </string>
+
+    <string name="enable_detector">Włącz detektor</string>
+    <string name="disable_detector">Włącz detektor</string>
+    <string name="settings">Ustawienia</string>
+</resources>

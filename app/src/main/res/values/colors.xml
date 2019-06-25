@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFC107</color>
+    <color name="colorPrimaryDark">#FF9800</color>
+    <color name="colorAccent">#F44336</color>
+
+    <color name="colorLight">#FCEECD</color>
+    <color name="colorSelectedContact">#009688</color>
+    <color name="colorDefaultBackground">#FAFAFA</color>
+
+    <color name="colorEnabled">#8BC34A</color>
+    <color name="colorDisabled">#F44336</color>
+
+
+</resources>
