@@ -4,9 +4,11 @@
     <color name="colorPrimaryDark">#FF9800</color>
     <color name="colorAccent">#F44336</color>
 
-    <color name="colorLight">#FCEECD</color>
-    <color name="colorSelectedContact">#009688</color>
+    <color name="colorLightBright">#FCEECD</color>
+    <color name="colorLightDarker">#C5B17F</color>
     <color name="colorDefaultBackground">#FAFAFA</color>
+    <color name="colorDefault">#FAFAFA</color>
+
 
     <color name="colorEnabled">#8BC34A</color>
     <color name="colorDisabled">#F44336</color>

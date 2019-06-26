@@ -17,9 +17,9 @@ public class DetectorContract {
                 .build();
 
         public static final String TABLE_NAME = "detector";
-        public static final String COLUMN_NUMBER = "number";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_SURNAME = "surname";
+        public static final String COLUMN_PHONE_NUMBER = "number";
+        public static final String COLUMN_FIRSTNAME = "name";
+        public static final String COLUMN_LASTNAME = "surname";
         public static final String COLUMN_SELECTED = "selected";
     }
 }

@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Detektor Upadku</string>
-    <string name="title_activity_contact">Lista Kontaktów</string>
-    <string name="activity_main_contacts">Kontakty</string>
-    <string name="basic_fall_message">Wywróciłem się pod adresem </string>
+    <string name="app_name">Detektor upadku</string>
+    <string name="title_activity_contact">Lista osób upoważnionych</string>
+    <string name="basic_fall_message">Wywróciłem się pod adresem</string>
+    <string name="request_contact_message">Prosze zadzwoń do mnie!</string>
 
     <!--Contacts dialog-->
     <string name="contact_dialog_number">Numer</string>
@@ -21,6 +21,11 @@
     </string>
 
     <string name="enable_detector">Włącz detektor</string>
-    <string name="disable_detector">Włącz detektor</string>
-    <string name="settings">Ustawienia</string>
+    <string name="disable_detector">Wyłącz detektor</string>
+    <string name="contacts">Osoby upoważnione</string>
+    <string name="false_alarm">Wszystko w porządku</string>
+    <string name="counting_canceled">Odliczanie zatrzymane!</string>
+
+    <string name="information_timer_recipent">Po upływie czasu o twoim upadku zostanie powiadomiony</string>
+    <string name="counting_to_message">Odliczanie do powiadomienia</string>
 </resources>

@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -16,10 +17,10 @@ public class DetectorProvider extends ContentProvider {
 
     private static final int CODE_CONTACT_LIST = 100;
     private static final int CODE_SINGLE_CONTACT = 101;
-    private static final UriMatcher sUriMatcher = builUriMatcher();
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
     private DetectorDbHelper mDbHelper;
 
-    private static UriMatcher builUriMatcher() {
+    private static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         String authority = DetectorContract.CONTENT_AUTHORITY;
 
@@ -42,20 +43,10 @@ public class DetectorProvider extends ContentProvider {
 
         Cursor cursor;
 
-        switch (sUriMatcher.match(uri)) {
-            case CODE_CONTACT_LIST:
-                cursor = mDbHelper.getReadableDatabase().query(
-                        DetectorContract.DetectorEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri ");
+        if (sUriMatcher.match(uri) == CODE_CONTACT_LIST) {
+            cursor = mDbHelper.getReadableDatabase().query(DetectorContract.DetectorEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+        } else {
+            throw new UnsupportedOperationException("Unknown uri ");
         }
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -73,21 +64,16 @@ public class DetectorProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         Uri retUri;
 
-        switch (sUriMatcher.match(uri)) {
-            case CODE_CONTACT_LIST:
-                long insertedId = mDbHelper.getWritableDatabase().insert(
-                        DetectorContract.DetectorEntry.TABLE_NAME,
-                        null,
-                        values);
+        if (sUriMatcher.match(uri) == CODE_CONTACT_LIST) {
+            long insertedId = mDbHelper.getWritableDatabase().insert(DetectorContract.DetectorEntry.TABLE_NAME, null, values);
 
-                if (insertedId > 0) {
-                    retUri = ContentUris.withAppendedId(DetectorContract.DetectorEntry.CONTENT_URI, insertedId);
-                } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
-                }
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknow uri: " + uri);
+            if (insertedId > 0) {
+                retUri = ContentUris.withAppendedId(DetectorContract.DetectorEntry.CONTENT_URI, insertedId);
+            } else {
+                throw new SQLException("Failed to insert row into " + uri);
+            }
+        } else {
+            throw new UnsupportedOperationException("Unknow uri: " + uri);
         }
 
         Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri, null);
@@ -101,15 +87,13 @@ public class DetectorProvider extends ContentProvider {
 
         final SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        switch (sUriMatcher.match(uri)) {
-            case CODE_SINGLE_CONTACT:
-                String id = uri.getLastPathSegment();
-                String tableName = DetectorContract.DetectorEntry.TABLE_NAME;
+        if (sUriMatcher.match(uri) == CODE_SINGLE_CONTACT) {
+            String id = uri.getLastPathSegment();
+            String tableName = DetectorContract.DetectorEntry.TABLE_NAME;
 
-                deletedContact = database.delete(tableName, "_id=?", new String[]{id});
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            deletedContact = database.delete(tableName, "_id=?", new String[]{id});
+        } else {
+            throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
         if (deletedContact != 0) {
@@ -126,15 +110,13 @@ public class DetectorProvider extends ContentProvider {
         final SQLiteDatabase database = mDbHelper.getWritableDatabase();
         int updatedContact;
 
-        switch (sUriMatcher.match(uri)) {
-            case CODE_SINGLE_CONTACT:
-                String id = uri.getLastPathSegment();
-                String tableName = DetectorContract.DetectorEntry.TABLE_NAME;
+        if (sUriMatcher.match(uri) == CODE_SINGLE_CONTACT) {
+            String id = uri.getLastPathSegment();
+            String tableName = DetectorContract.DetectorEntry.TABLE_NAME;
 
-                updatedContact = database.update(tableName, values, "_id=?", new String[]{id});
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+            updatedContact = database.update(tableName, values, "_id=?", new String[]{id});
+        } else {
+            throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
         if (updatedContact != 0) {

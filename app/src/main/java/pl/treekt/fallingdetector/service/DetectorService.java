@@ -1,9 +1,7 @@
 package pl.treekt.fallingdetector.service;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,19 +9,19 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
 import android.widget.Toast;
-
-import java.util.Objects;
-
 import pl.treekt.fallingdetector.ContactActivity;
-import pl.treekt.fallingdetector.MainActivity;
+import pl.treekt.fallingdetector.FallDetectedActivity;
 import pl.treekt.fallingdetector.R;
 import pl.treekt.fallingdetector.data.DetectorContract;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class DetectorService extends Service implements SensorEventListener {
 
@@ -54,7 +52,6 @@ public class DetectorService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // low pass filter
         final float alpha = 0.8f;
 
         gravity[AXIS_X_INDEX] = alpha * gravity[AXIS_X_INDEX] + (1 - alpha) * event.values[AXIS_X_INDEX];
@@ -109,54 +106,23 @@ public class DetectorService extends Service implements SensorEventListener {
 
     private void handleFallDetection() {
         SingleShotLocationProvider.requestSingleUpdate(this, location -> {
-            String message = new StringBuilder()
-                    .append(location.getStreet())
-                    .append(" ")
-                    .append(location.getStreetNumber())
-                    .append(" ")
-                    .append(location.getCity())
-                    .append(" ")
-                    .append(location.getCountry())
-                    .toString();
+            String locationMessage = new StringBuilder()
+                    .append(location.getStreet()).append(" ")
+                    .append(location.getStreetNumber()).append(" ")
+                    .append(location.getCity()).append(" ")
+                    .append(location.getCountry()).toString();
 
-            showNotification(message);
-            sendSmsMessage(message);
+            startFallDetectedWaiting(locationMessage);
         });
     }
 
-    private void showNotification(String message) {
-        final NotificationManager notificationManager = (NotificationManager) this.getSystemService
-                (NOTIFICATION_SERVICE);
+    private void startFallDetectedWaiting(String locationMessage){
+        Intent intent = new Intent(this, FallDetectedActivity.class);
+        intent.putExtra("locationMessage", locationMessage);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 
-        PendingIntent pendingIntent = PendingIntent
-                .getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Test accelerometer")
-                .setContentText(message)
-                .setTicker("accelerometer")
-                .setAutoCancel(true)
-                .setSmallIcon(android.R.drawable.ic_notification_overlay)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setContentIntent(pendingIntent)
-                .build();
-
-        notificationManager.notify(101, notification);
     }
 
-    private void sendSmsMessage(String smsMessage) {
-        SharedPreferences preferences = getApplicationContext()
-                .getSharedPreferences(ContactActivity.ACTIVITY_PREFS, MODE_PRIVATE);
 
-        int phoneNumber = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_NUMBER, 0);
-
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(Integer.toString(phoneNumber), null,
-                    this.getString(R.string.basic_fall_message) + smsMessage, null, null);
-            Toast.makeText(this, R.string.detector_service_message_sent_toast, Toast.LENGTH_SHORT).show();
-        } catch (Exception ex) {
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-            ex.printStackTrace();
-        }
-    }
 }

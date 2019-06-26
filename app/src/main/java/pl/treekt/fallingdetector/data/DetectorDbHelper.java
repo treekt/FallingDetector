@@ -18,9 +18,9 @@ public class DetectorDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_DETECTOR_TABLE =
                 "CREATE TABLE " + DetectorContract.DetectorEntry.TABLE_NAME + " (" +
                         DetectorContract.DetectorEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        DetectorContract.DetectorEntry.COLUMN_NUMBER + " INT NOT NULL ON CONFLICT REPLACE, " +
-                        DetectorContract.DetectorEntry.COLUMN_NAME + " TEXT, " +
-                        DetectorContract.DetectorEntry.COLUMN_SURNAME + " TEXT, " +
+                        DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER + " INT NOT NULL ON CONFLICT REPLACE, " +
+                        DetectorContract.DetectorEntry.COLUMN_FIRSTNAME + " TEXT, " +
+                        DetectorContract.DetectorEntry.COLUMN_LASTNAME + " TEXT, " +
                         DetectorContract.DetectorEntry.COLUMN_SELECTED + " INTEGER NOT NULL)";
 
         database.execSQL(SQL_CREATE_DETECTOR_TABLE);

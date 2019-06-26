@@ -3,7 +3,7 @@ package pl.treekt.fallingdetector.service;
 import lombok.Data;
 
 @Data
-public class DetectorLocationObject {
+public class DetectorLocation {
 
     private double latitude;
     private double longitude;

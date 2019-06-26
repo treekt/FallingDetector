@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools" package="pl.treekt.fallingdetector">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="pl.treekt.fallingdetector">
 
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -12,8 +13,18 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme" tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name="pl.treekt.fallingdetector.MainActivity">
+            android:theme="@style/AppTheme"
+            tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity
+                android:name=".FallDetectedActivity"
+                android:label="@string/counting_to_message"
+                android:parentActivityName=".MainActivity"
+                android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="pl.treekt.fallingdetector.MainActivity"/>
+        </activity>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -21,23 +32,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="pl.treekt.fallingdetector.ContactActivity"
-            android:label="@string/title_activity_contact"
-            android:parentActivityName="pl.treekt.fallingdetector.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+                android:name=".ContactActivity"
+                android:label="@string/title_activity_contact"
+                android:parentActivityName=".MainActivity"
+                android:theme="@style/AppTheme.NoActionBar">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="pl.treekt.fallingdetector.MainActivity"/>
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="pl.treekt.fallingdetector.MainActivity"/>
         </activity>
 
         <provider
-            android:name="pl.treekt.fallingdetector.data.DetectorProvider"
-            android:authorities="pl.treekt.fallingdetector"
-            android:exported="false"/>
+                android:name=".data.DetectorProvider"
+                android:authorities="pl.treekt.fallingdetector"
+                android:exported="false"/>
 
         <service
-            android:name="pl.treekt.fallingdetector.service.DetectorService"
-            android:exported="false"
-            />
+                android:name=".service.DetectorService"
+                android:exported="false"/>
     </application>
+
 </manifest>

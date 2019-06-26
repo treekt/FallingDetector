@@ -40,8 +40,8 @@ public class SingleShotLocationProvider {
             @Override
             public void onLocationChanged(Location location) {
                 Address geocoderAddress = getGeocoderAddress(location, context);
-                DetectorLocationObject detectorLocationObject = prepareLocationProperties(geocoderAddress);
-                callback.onNewLocationAvailable(detectorLocationObject);
+                DetectorLocation detectorLocation = prepareLocationProperties(geocoderAddress);
+                callback.onNewLocationAvailable(detectorLocation);
             }
 
             @Override
@@ -62,18 +62,18 @@ public class SingleShotLocationProvider {
 
     }
 
-    private static DetectorLocationObject prepareLocationProperties(@NonNull Address address) {
-        DetectorLocationObject detectorLocationObject = new DetectorLocationObject();
+    private static DetectorLocation prepareLocationProperties(@NonNull Address address) {
+        DetectorLocation detectorLocation = new DetectorLocation();
 
-        detectorLocationObject.setCity(address.getLocality());
-        detectorLocationObject.setCountry(address.getCountryName());
-        detectorLocationObject.setLatitude(address.getLatitude());
-        detectorLocationObject.setLongitude(address.getLongitude());
-        detectorLocationObject.setPostalCode(address.getPostalCode());
-        detectorLocationObject.setStreet(address.getThoroughfare());
-        detectorLocationObject.setStreetNumber(address.getSubThoroughfare());
+        detectorLocation.setCity(address.getLocality());
+        detectorLocation.setCountry(address.getCountryName());
+        detectorLocation.setLatitude(address.getLatitude());
+        detectorLocation.setLongitude(address.getLongitude());
+        detectorLocation.setPostalCode(address.getPostalCode());
+        detectorLocation.setStreet(address.getThoroughfare());
+        detectorLocation.setStreetNumber(address.getSubThoroughfare());
 
-        return detectorLocationObject;
+        return detectorLocation;
     }
 
     private static Address getGeocoderAddress(Location location, Context context) {
@@ -96,6 +96,6 @@ public class SingleShotLocationProvider {
     }
 
     public interface LocationCallback {
-        void onNewLocationAvailable(DetectorLocationObject location);
+        void onNewLocationAvailable(DetectorLocation location);
     }
 }

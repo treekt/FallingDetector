@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pl.treekt.fallingdetector.ContactActivity;
@@ -53,19 +52,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Contacts
     @NonNull
     @Override
     public ContactsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.contact_list_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.contact_list_item, parent, false);
 
         return new ContactsAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ContactsAdapterViewHolder holder, int position) {
-        //todo efficeciency improvement, move to ContactActivity.
         int idIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry._ID);
-        int numberIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_NUMBER);
-        int nameIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_NAME);
-        int surnameIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_SURNAME);
+        int numberIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER);
+        int nameIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME);
+        int surnameIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_LASTNAME);
         int selectionIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_SELECTED);
 
         mCursor.moveToPosition(position);
@@ -83,7 +80,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Contacts
 
         if (selection != ContactActivity.NOT_SELECTED_INT) {
             currentSelectionId = id;
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorSelectedContact));
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorLightBright));
             holder.isSelected = true;
         } else {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorDefaultBackground));
@@ -129,6 +126,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Contacts
 
         public int getNumber() {
             return Integer.valueOf(contactNumberTv.getText().toString());
+        }
+
+        public String getFullName(){
+            return contactNameTv.getText().toString() + " " + contactSurnameTv.getText().toString();
         }
 
         public Boolean getSelected() {
