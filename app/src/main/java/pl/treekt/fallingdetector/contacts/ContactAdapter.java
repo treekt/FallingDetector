@@ -15,12 +15,13 @@ import pl.treekt.fallingdetector.ContactActivity;
 import pl.treekt.fallingdetector.R;
 import pl.treekt.fallingdetector.data.DetectorContract;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactsAdapterViewHolder> {
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
 
-    private Integer currentSelectionId;
     private Cursor mCursor;
     private Context mContext;
     private OnContactSelectionListener contactSelectionListener;
+
+    private Integer currentSelectionId;
 
     public ContactAdapter(@NonNull Context context) {
         this.mContext = context;
@@ -38,27 +39,26 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Contacts
         this.currentSelectionId = currentSelectionId;
     }
 
-    public void swapCursor(Cursor cursor) {
-        if (mCursor == cursor) {
+    public void swapCursor(Cursor newCusor) {
+        if (mCursor == newCusor) {
             return;
         }
 
-        if (cursor != null) {
-            this.mCursor = cursor;
+        if (newCusor != null) {
+            this.mCursor = newCusor;
             this.notifyDataSetChanged();
         }
     }
 
     @NonNull
     @Override
-    public ContactsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ContactAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.contact_list_item, parent, false);
-
-        return new ContactsAdapterViewHolder(view);
+        return new ContactAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContactsAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder, int position) {
         int idIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry._ID);
         int numberIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER);
         int nameIndex = mCursor.getColumnIndex(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME);
@@ -97,10 +97,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Contacts
     }
 
     public interface OnContactSelectionListener {
-        void onSelectionChanged(ContactsAdapterViewHolder viewHolder);
+        void onSelectionChanged(ViewHolder viewHolder);
     }
 
-    public class ContactsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         @BindView(R.id.tv_contact_name)
         TextView contactNameTv;
@@ -111,7 +111,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Contacts
 
         private Boolean isSelected;
 
-        ContactsAdapterViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnLongClickListener(this);

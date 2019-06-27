@@ -12,8 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pl.treekt.fallingdetector.data.DetectorContract;
 import pl.treekt.fallingdetector.service.DetectorService;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Button contactsButton;
     @BindView(R.id.state_detector_button)
     Button stateDetectorButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,22 +68,28 @@ public class MainActivity extends AppCompatActivity {
     private void changeDetectorState(boolean onlyDecoration) {
         SharedPreferences preferences = getSharedPreferences(DETECTOR_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editorPrefs = preferences.edit();
-        int state = preferences.getInt("detectorState", 0);
-        if (state == 0) {
-            if (!onlyDecoration) {
-                runService();
-                editorPrefs.putInt("detectorState", 1).apply();
+        int detectorState = preferences.getInt("detectorState", 0);
+        boolean isSelectedContact = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, 0) != 0;
+
+        if (detectorState == 0) {
+            if (onlyDecoration) {
+                changeDetectorStateButton(0);
+            } else {
+                if(isSelectedContact){
+                    runService();
+                    editorPrefs.putInt("detectorState", 1).apply();
+                    changeDetectorStateButton(1);
+                }else {
+                    Toast.makeText(this, getString(R.string.contact_not_selected_information), Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else if (detectorState == 1) {
+            if (onlyDecoration) {
                 changeDetectorStateButton(1);
             } else {
-                changeDetectorStateButton(0);
-            }
-        } else if (state == 1) {
-            if (!onlyDecoration) {
                 editorPrefs.putInt("detectorState", 0).apply();
                 stopService();
                 changeDetectorStateButton(0);
-            } else {
-                changeDetectorStateButton(1);
             }
         }
     }

@@ -3,6 +3,7 @@
     <string name="title_activity_contact">Lista osób upoważnionych</string>
     <string name="basic_fall_message">Wywróciłem się pod adresem</string>
     <string name="default_contact_message">Prosze zadzwoń do mnie!</string>
+    <string name="default_counting_time">30</string>
 
     <!--Contacts dialog-->
     <string name="contact_dialog_number">Numer</string>
@@ -33,4 +34,5 @@
 
     <string name="settings_preference_message_key">message_to_contact_key</string>
     <string name="settings_preference_time_key">waiting_time_value_key</string>
+    <string name="contact_not_selected_information">Nie wybrałeś osoby upoważnionej do kontaktu!</string>
 </resources>

@@ -12,5 +12,6 @@
             android:key="@string/settings_preference_time_key"
             android:inputType="number"
             android:defaultValue="@integer/default_counting_time"
-            android:summary="Wprowadź czas oczekiwania po upadku"/>
+            android:numeric="integer"
+            android:summary="Wprowadź czas oczekiwania po upadku" android:autoText="false"/>
 </PreferenceScreen>

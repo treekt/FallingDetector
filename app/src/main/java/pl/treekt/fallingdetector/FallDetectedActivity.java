@@ -49,7 +49,7 @@ public class FallDetectedActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences preferences = getSharedPreferences(MainActivity.DETECTOR_PREFS, MODE_PRIVATE);
-        maxTime = preferences.getInt(getString(R.string.settings_preference_time_key), R.integer.default_counting_time);
+        maxTime = Integer.parseInt(preferences.getString(getString(R.string.settings_preference_time_key), getResources().getString(R.string.default_counting_time)));
         messageToContact = preferences.getString(getString(R.string.settings_preference_message_key), this.getString(R.string.default_contact_message));
 
         circleProgressBar.setProgressFormatter((progress, max) -> String.format("%d", (int) ((float) progress / (float) max * maxTime)));
@@ -62,6 +62,7 @@ public class FallDetectedActivity extends AppCompatActivity {
         infoContactRecipentTextView.setText(getString(R.string.information_timer_recipent) + " "  + fullName + " na numer " + phoneNumber);
         falseAlarmButton.setOnClickListener(v -> cancelProgressBarProcess());
         locationMessage = getIntent().getStringExtra("locationMessage");
+        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
     }
 
 

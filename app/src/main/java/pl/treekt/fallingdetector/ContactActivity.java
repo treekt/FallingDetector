@@ -2,7 +2,6 @@ package pl.treekt.fallingdetector;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -126,6 +125,7 @@ public class ContactActivity extends AppCompatActivity implements LoaderManager.
             public Cursor loadInBackground() {
                 try {
                     return getContentResolver().query(DetectorContract.DetectorEntry.CONTENT_URI, null, null, null, DetectorContract.DetectorEntry.COLUMN_FIRSTNAME);
+
                 } catch (Exception ex) {
                     Log.e(TAG, "Failed to load data from database.");
                     ex.printStackTrace();
@@ -152,7 +152,7 @@ public class ContactActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void attachSwipeToDelete() {
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -160,16 +160,18 @@ public class ContactActivity extends AppCompatActivity implements LoaderManager.
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                SharedPreferences.Editor editor = getSharedPreferences(MainActivity.DETECTOR_PREFS, MODE_PRIVATE).edit();
                 int contactId = (int) viewHolder.itemView.getTag();
 
                 String stringId = Integer.toString(contactId);
                 Uri uri = DetectorContract.DetectorEntry.CONTENT_URI;
                 uri = uri.buildUpon().appendPath(stringId).build();
 
-                if (((ContactAdapter.ContactsAdapterViewHolder) viewHolder).getSelected()) {
+                if (((ContactAdapter.ViewHolder) viewHolder).getSelected()) {
                     contactAdapter.setCurrentSelectionId(null);
+                    editor.remove(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER).apply();
+                    editor.remove(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME).apply();
                 }
-
                 getContentResolver().delete(uri, null, null);
 
                 getSupportLoaderManager().restartLoader(CONTACT_LOADER_ID, null, ContactActivity.this);
@@ -178,33 +180,35 @@ public class ContactActivity extends AppCompatActivity implements LoaderManager.
     }
 
     @Override
-    public void onSelectionChanged(ContactAdapter.ContactsAdapterViewHolder viewHolder) {
+    public void onSelectionChanged(ContactAdapter.ViewHolder viewHolder) {
         SharedPreferences.Editor editor = getSharedPreferences(MainActivity.DETECTOR_PREFS, MODE_PRIVATE).edit();
+        Integer contactId = (int) viewHolder.itemView.getTag();
 
-        editor.putInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, viewHolder.getNumber()).apply();
-        editor.putString(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME, viewHolder.getFullName()).apply();
+        if (contactId.equals(contactAdapter.getCurrentSelectionId())) {
+            updateSelection(Integer.toString(contactId), 0);
+            contactAdapter.setCurrentSelectionId(null);
 
-        int contactId = (int) viewHolder.itemView.getTag();
-        Uri uri = DetectorContract.DetectorEntry.CONTENT_URI;
-        uri = uri.buildUpon().appendPath(Integer.toString(contactId)).build();
+            editor.remove(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER).apply();
+            editor.remove(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME).apply();
+        } else {
+            if(contactAdapter.getCurrentSelectionId() != null){
+                updateSelection(Integer.toString(contactAdapter.getCurrentSelectionId()), 0);
+            }
+            updateSelection(Integer.toString(contactId), 1);
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DetectorContract.DetectorEntry.COLUMN_SELECTED, viewHolder.getSelected());
-        getContentResolver().update(uri, contentValues, null, null);
-
-        if (contactAdapter.getCurrentSelectionId() != null) {
-            updatePreviousSelection();
+            editor.putInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, viewHolder.getNumber()).apply();
+            editor.putString(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME, viewHolder.getFullName()).apply();
         }
 
         getSupportLoaderManager().restartLoader(CONTACT_LOADER_ID, null, ContactActivity.this);
     }
 
-    private void updatePreviousSelection() {
+    private void updateSelection(String id, int selected) {
         Uri uri = DetectorContract.DetectorEntry.CONTENT_URI;
-        uri = uri.buildUpon().appendPath(Integer.toString(contactAdapter.getCurrentSelectionId())).build();
+        uri = uri.buildUpon().appendPath(id).build();
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DetectorContract.DetectorEntry.COLUMN_SELECTED, NOT_SELECTED_INT);
+        contentValues.put(DetectorContract.DetectorEntry.COLUMN_SELECTED, selected);
         getContentResolver().update(uri, contentValues, null, null);
     }
 }

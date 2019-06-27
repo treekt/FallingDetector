@@ -17,6 +17,7 @@
                 android:layout_marginTop="@dimen/form_item_spacing"
                 android:background="@android:color/transparent"
                 android:hint="@string/contact_dialog_number"
+                android:maxLength="9"
                 android:inputType="number"
                 android:textSize="@dimen/form_item_text_size"/>
     </android.support.design.widget.TextInputLayout>

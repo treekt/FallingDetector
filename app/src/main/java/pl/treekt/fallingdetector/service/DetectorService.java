@@ -17,6 +17,7 @@ import android.telephony.SmsManager;
 import android.widget.Toast;
 import pl.treekt.fallingdetector.ContactActivity;
 import pl.treekt.fallingdetector.FallDetectedActivity;
+import pl.treekt.fallingdetector.MainActivity;
 import pl.treekt.fallingdetector.R;
 import pl.treekt.fallingdetector.data.DetectorContract;
 
@@ -112,14 +113,18 @@ public class DetectorService extends Service implements SensorEventListener {
                     .append(location.getCity()).append(" ")
                     .append(location.getCountry()).toString();
 
-            startFallDetectedWaiting(locationMessage);
+            SharedPreferences preferences = getSharedPreferences(MainActivity.DETECTOR_PREFS, MODE_PRIVATE);
+            boolean isSelectedContact = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, 0) != 0;
+
+            if(isSelectedContact){
+                startFallDetectedWaiting(locationMessage);
+            }
         });
     }
 
     private void startFallDetectedWaiting(String locationMessage){
         Intent intent = new Intent(this, FallDetectedActivity.class);
         intent.putExtra("locationMessage", locationMessage);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
     }
