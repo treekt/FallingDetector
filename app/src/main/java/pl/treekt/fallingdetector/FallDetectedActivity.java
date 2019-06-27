@@ -3,7 +3,6 @@ package pl.treekt.fallingdetector;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
@@ -32,6 +31,8 @@ public class FallDetectedActivity extends AppCompatActivity {
     private Integer maxTime;
     private String messageToContact;
     private int phoneNumber;
+
+    boolean countingStatus = true;
 
     private final int[] progressValue = {0};
     private String locationMessage;
@@ -62,7 +63,6 @@ public class FallDetectedActivity extends AppCompatActivity {
         infoContactRecipentTextView.setText(getString(R.string.information_timer_recipent) + " "  + fullName + " na numer " + phoneNumber);
         falseAlarmButton.setOnClickListener(v -> cancelProgressBarProcess());
         locationMessage = getIntent().getStringExtra("locationMessage");
-        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -86,16 +86,20 @@ public class FallDetectedActivity extends AppCompatActivity {
     }
 
     private void cancelProgressBarProcess(){
+        if(!countingStatus){
+            onBackPressed();
+        }
+
         if(progressValue[0] < 60){
             timer.cancel();
             disableFalseAlarmButton();
+            countingStatus = false;
         }
     }
 
     private void disableFalseAlarmButton(){
         falseAlarmButton.setBackground(getDrawable(R.color.colorDisabled));
         falseAlarmButton.setText(getString(R.string.counting_canceled));
-        falseAlarmButton.setClickable(false);
     }
 
     private void sendSmsMessage() {

@@ -2,6 +2,8 @@ package pl.treekt.fallingdetector;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -67,29 +69,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void changeDetectorState(boolean onlyDecoration) {
         SharedPreferences preferences = getSharedPreferences(DETECTOR_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editorPrefs = preferences.edit();
-        int detectorState = preferences.getInt("detectorState", 0);
+
+        boolean isDetectorRunning = isServiceRunning(DetectorService.class);
         boolean isSelectedContact = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, 0) != 0;
 
-        if (detectorState == 0) {
+        if (isDetectorRunning) {
+            if (onlyDecoration) {
+                changeDetectorStateButton(1);
+            } else {
+                stopService();
+                changeDetectorStateButton(0);
+            }
+        } else {
             if (onlyDecoration) {
                 changeDetectorStateButton(0);
             } else {
                 if(isSelectedContact){
                     runService();
-                    editorPrefs.putInt("detectorState", 1).apply();
                     changeDetectorStateButton(1);
                 }else {
                     Toast.makeText(this, getString(R.string.contact_not_selected_information), Toast.LENGTH_SHORT).show();
                 }
-            }
-        } else if (detectorState == 1) {
-            if (onlyDecoration) {
-                changeDetectorStateButton(1);
-            } else {
-                editorPrefs.putInt("detectorState", 0).apply();
-                stopService();
-                changeDetectorStateButton(0);
             }
         }
     }
@@ -126,5 +126,15 @@ public class MainActivity extends AppCompatActivity {
                 requestPermissions(permissions, 10);
             }
         }
+    }
+
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
