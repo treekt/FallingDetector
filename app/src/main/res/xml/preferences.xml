@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+            android:title="Wiadomość"
+            android:key="@string/settings_preference_message_key"
+            android:inputType="text"
+            android:defaultValue="@string/default_contact_message"
+            android:summary="Wprowadź wiadomość dla osoby upoważnionej"/>
+    <EditTextPreference
+            android:title="Czas oczekiwania"
+            android:key="@string/settings_preference_time_key"
+            android:inputType="number"
+            android:defaultValue="@integer/default_counting_time"
+            android:summary="Wprowadź czas oczekiwania po upadku"/>
+</PreferenceScreen>

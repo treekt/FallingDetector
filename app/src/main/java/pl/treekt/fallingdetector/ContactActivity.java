@@ -32,7 +32,6 @@ import java.util.Objects;
 
 public class ContactActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ContactAdapter.OnContactSelectionListener {
 
-    public static final String ACTIVITY_PREFS = "ContactPreferences";
     public static final int NOT_SELECTED_INT = 0;
 
     private static final int CONTACT_LOADER_ID = 2090;
@@ -180,8 +179,7 @@ public class ContactActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onSelectionChanged(ContactAdapter.ContactsAdapterViewHolder viewHolder) {
-        Context context = getApplicationContext();
-        SharedPreferences.Editor editor = context.getSharedPreferences(ACTIVITY_PREFS, MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences(MainActivity.DETECTOR_PREFS, MODE_PRIVATE).edit();
 
         editor.putInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, viewHolder.getNumber()).apply();
         editor.putString(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME, viewHolder.getFullName()).apply();

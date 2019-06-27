@@ -3,6 +3,7 @@ package pl.treekt.fallingdetector;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
@@ -28,7 +29,10 @@ public class FallDetectedActivity extends AppCompatActivity {
     @BindView(R.id.false_alarm_btn)
     Button falseAlarmButton;
 
-    private Integer maxTime = 10;
+    private Integer maxTime;
+    private String messageToContact;
+    private int phoneNumber;
+
     private final int[] progressValue = {0};
     private String locationMessage;
     private Timer timer;
@@ -44,13 +48,15 @@ public class FallDetectedActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        SharedPreferences preferences = getSharedPreferences(MainActivity.DETECTOR_PREFS, MODE_PRIVATE);
+        maxTime = preferences.getInt(getString(R.string.settings_preference_time_key), R.integer.default_counting_time);
+        messageToContact = preferences.getString(getString(R.string.settings_preference_message_key), this.getString(R.string.default_contact_message));
+
         circleProgressBar.setProgressFormatter((progress, max) -> String.format("%d", (int) ((float) progress / (float) max * maxTime)));
         circleProgressBar.setMax(maxTime);
         timer = startProgressBarProcess();
 
-
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences(ContactActivity.ACTIVITY_PREFS, MODE_PRIVATE);
-        int phoneNumber = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, 0);
+        phoneNumber = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, 0);
         String fullName = preferences.getString(DetectorContract.DetectorEntry.COLUMN_FIRSTNAME, "FIRST LAST NAME");
 
         infoContactRecipentTextView.setText(getString(R.string.information_timer_recipent) + " "  + fullName + " na numer " + phoneNumber);
@@ -92,11 +98,8 @@ public class FallDetectedActivity extends AppCompatActivity {
     }
 
     private void sendSmsMessage() {
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences(ContactActivity.ACTIVITY_PREFS, MODE_PRIVATE);
-        int phoneNumber = preferences.getInt(DetectorContract.DetectorEntry.COLUMN_PHONE_NUMBER, 0);
-
         try {
-            String message = this.getString(R.string.basic_fall_message) + " " + locationMessage + ".\n" + this.getString(R.string.request_contact_message);
+            String message = this.getString(R.string.basic_fall_message) + " " + locationMessage + ".\n" + messageToContact;
             SmsManager smsManager = SmsManager.getDefault();
             ArrayList<String> messageParts = smsManager.divideMessage(message);
             smsManager.sendMultipartTextMessage(Integer.toString(phoneNumber), null, messageParts, null, null);

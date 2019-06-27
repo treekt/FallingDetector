@@ -15,9 +15,17 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".SettingsActivity"
+                  android:label="@string/settings_label"
+                  android:parentActivityName=".MainActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="pl.treekt.fallingdetector.MainActivity"/>
+        </activity>
         <activity
                 android:name=".FallDetectedActivity"
-                android:label="@string/counting_to_message"
+                android:label="@string/counting_to_message_label"
                 android:parentActivityName=".MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data

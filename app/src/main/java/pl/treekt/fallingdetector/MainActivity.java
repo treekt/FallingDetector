@@ -6,18 +6,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pl.treekt.fallingdetector.data.DetectorContract;
 import pl.treekt.fallingdetector.service.DetectorService;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String ACTIVITY_PREFS = "MainPreferences";
+    public static final String DETECTOR_PREFS = "DetectorPreferences";
 
     @BindView(R.id.contacts_button)
     Button contactsButton;
@@ -32,45 +33,63 @@ public class MainActivity extends AppCompatActivity {
         setupOnClickListener();
         requestPermission();
         changeDetectorState(true);
+
+        PreferenceManager.setDefaultValues(this, MainActivity.DETECTOR_PREFS, MODE_PRIVATE, R.xml.preferences, false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_settings){
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
     private void setupOnClickListener() {
         stateDetectorButton.setOnClickListener(v -> changeDetectorState(false));
         contactsButton.setOnClickListener((View view) -> {
-            Intent intentToOpenDetails = new Intent(this, ContactActivity.class);
-            startActivity(intentToOpenDetails);
+            Intent intentContacts = new Intent(this, ContactActivity.class);
+            startActivity(intentContacts);
         });
     }
 
-    private void changeDetectorState(boolean onlyDecoration){
-        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences(ACTIVITY_PREFS, MODE_PRIVATE).edit();
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences(ACTIVITY_PREFS, MODE_PRIVATE);
+    private void changeDetectorState(boolean onlyDecoration) {
+        SharedPreferences preferences = getSharedPreferences(DETECTOR_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editorPrefs = preferences.edit();
         int state = preferences.getInt("detectorState", 0);
-        if(state == 0){
-            if(!onlyDecoration) {
+        if (state == 0) {
+            if (!onlyDecoration) {
                 runService();
-                editor.putInt("detectorState", 1).apply();
+                editorPrefs.putInt("detectorState", 1).apply();
                 changeDetectorStateButton(1);
-            }else{
+            } else {
                 changeDetectorStateButton(0);
             }
-        }else if(state == 1){
-            if(!onlyDecoration) {
-                editor.putInt("detectorState", 0).apply();
+        } else if (state == 1) {
+            if (!onlyDecoration) {
+                editorPrefs.putInt("detectorState", 0).apply();
                 stopService();
                 changeDetectorStateButton(0);
-            }else{
+            } else {
                 changeDetectorStateButton(1);
             }
         }
     }
 
-    private void changeDetectorStateButton(int state){
-        if(state == 0) {
+    private void changeDetectorStateButton(int state) {
+        if (state == 0) {
             stateDetectorButton.setText(getString(R.string.enable_detector));
             stateDetectorButton.setBackground(getDrawable(R.color.colorPrimary));
-        }else if(state == 1){
+        } else if (state == 1) {
             stateDetectorButton.setText(getString(R.string.disable_detector));
             stateDetectorButton.setBackground(getDrawable(R.color.colorDisabled));
         }
@@ -80,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetectorService.class);
         startService(intent);
     }
+
     private void stopService() {
         Intent intent = new Intent(this, DetectorService.class);
         stopService(intent);
